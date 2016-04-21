@@ -1,3 +1,11 @@
+# jvm-npm (nashorn-Edition)
+This is a specialized fork of jvm-npm for the nashorn engine
+to provide a better tool support for module development
+(debugging, stacktraces etc)
+Besides this, it should be completely compatible.
+
+See also https://github.com/nodyn/jvm-npm
+
 # jvm-npm
 
 Support for NPM module loading in Javascript runtimes on the JVM.
