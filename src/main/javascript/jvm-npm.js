@@ -53,16 +53,32 @@ module = (typeof module == 'undefined') ? {} :  module;
       return Require(id, this);
     }.bind(this);
   }
-
+  
   Module._load = function _load(file, parent, core, main) {
     var module = new Module(file, parent, core);
     var __FILENAME__ = module.filename;
-    var body   = readFile(module.filename, module.core),
-        dir    = new File(module.filename).getParent(),
-        args   = ['exports', 'module', 'require', '__filename', '__dirname'],
-        func   = new Function(args, body);
-    func.apply(module,
-        [module.exports, module, module.require, module.filename, dir]);
+    var body   = readFile(module.filename, module.core);
+    var dir    = new File(module.filename).getParent();
+
+    // set module temporarily on require function to read them in the script
+    // the nashorn-specific-'load'-Function is used to allow for a better 
+    // tool-support (debugging, stacktraces etc)
+    require['$$__MODULE__$$'] = module;
+    require['$$__MODULE_DIR__$$'] = dir;	
+    load({ name: module.filename, script: //
+        "(function(exports, module, require, __filename, __dirname){" +
+	body +
+        "\n}).call(" +
+	"require['$$__MODULE__$$'], " +	
+	"require['$$__MODULE__$$'].exports, " +
+	"require['$$__MODULE__$$'], " +
+	"require['$$__MODULE__$$'].require, " +
+	"require['$$__MODULE__$$'].filename, " +
+	"require['$$__MODULE_DIR__$$']);" +
+	"delete require['$$__MODULE__$$'];" +
+	"delete require['$$__MODULE_DIR__$$'];"
+    });
+    
     module.loaded = true;
     module.main = main;
     return module.exports;
