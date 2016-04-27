@@ -1,0 +1,10 @@
+{
+    "name": "jvm-npm",
+    "version": "0.1.0",
+    "description": "NPM compliant CommonJS module loader for the JVM. Nashorn fork.",
+    "author": "Lance Ball <lball@redhat.com>",
+    "contributors": {
+        "Eric Giese <eric6iese@googlemail.com>"
+    }
+    "homepage": "https://github.com/eric6iese/jvm-npm#readme"
+}
