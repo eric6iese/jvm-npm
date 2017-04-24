@@ -19,9 +19,10 @@
 module = (typeof module == 'undefined') ? {} :  module;
 
 (function() {
-  var System  = java.lang.System,
-      Scanner = java.util.Scanner,
-      File    = java.io.File;
+  var System  = Java.type('java.lang.System'),
+      Scanner = Java.type('java.util.Scanner'),
+      File    = Java.type('java.io.File'),
+	  Files = Java.type('java.nio.file.Files');
 
   NativeRequire = (typeof NativeRequire === 'undefined') ? {} : NativeRequire;
   if (typeof require === 'function' && !NativeRequire.require) {
@@ -270,12 +271,13 @@ module = (typeof module == 'undefined') ? {} :  module;
     try {
       if (core) {
         var classloader = java.lang.Thread.currentThread().getContextClassLoader();
-        input = classloader.getResourceAsStream(filename);
+        input = classloader.getResourceAsStream(filename);		
+        // TODO: I think this is not very efficient
+        return new Scanner(input).useDelimiter("\\A").next();
       } else {
-        input = new File(filename);
+        input = new File(filename).toPath();
+		return new java.lang.String(Files.readAllBytes(input));
       }
-      // TODO: I think this is not very efficient
-      return new Scanner(input).useDelimiter("\\A").next();
     } catch(e) {
       throw new ModuleError("Cannot read file ["+input+"]: ", "IO_ERROR", e);
     }
